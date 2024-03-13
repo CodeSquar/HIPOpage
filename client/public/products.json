@@ -1,0 +1,186 @@
+[
+    {
+        "_id": {
+            "$oid": "6521a04f41e9e747782b9282"
+        },
+        "name": "Pelota de Goma para Perros",
+        "price": 700,
+        "imageUrl": "https://d28hi93gr697ol.cloudfront.net/071e89ac-46a5-8ab3/img/Producto/1934/02-1621353559-63212ad6a6a6c.jpeg",
+        "category": "",
+        "quantityAvailable": 5,
+        "weight": null,
+        "discountPercentage": 10,
+        "createdAt": {
+            "$date": "2023-10-07T18:15:43.664Z"
+        },
+        "updatedAt": {
+            "$date": "2023-10-07T18:15:43.664Z"
+        },
+        "__v": 0
+    }, {
+        "_id": {
+            "$oid": "6521a10341e9e747782b92a7"
+        },
+        "name": "Comida Premium para Gatos",
+        "price": 1000,
+        "imageUrl": "https://jumboargentina.vtexassets.com/arquivos/ids/760156/Alimento-Whiskas-Para-Gatos-Carne-3kg-1-814242.jpg?v=638048145838300000",
+        "category": "",
+        "quantityAvailable": 5,
+        "weight": 3,
+        "discountPercentage": 0,
+        "createdAt": {
+            "$date": "2023-10-07T18:18:43.235Z"
+        },
+        "updatedAt": {
+            "$date": "2023-10-07T18:18:43.235Z"
+        },
+        "__v": 0
+    }, {
+        "_id": {
+            "$oid": "6521a2b241e9e747782b92f4"
+        },
+        "name": "Correa Ajustable para Perros",
+        "price": 500,
+        "imageUrl": "https://catycanar.vtexassets.com/arquivos/ids/156870/13702.jpg?v=637732972353700000",
+        "category": "",
+        "quantityAvailable": 5,
+        "weight": null,
+        "discountPercentage": 15,
+        "createdAt": {
+            "$date": "2023-10-07T18:25:54.999Z"
+        },
+        "updatedAt": {
+            "$date": "2023-10-07T18:25:54.999Z"
+        },
+        "__v": 0
+    }, {
+        "_id": {
+            "$oid": "6521b28241e9e747782b9405"
+        },
+        "name": "Juguete de Cuerda para Mascotas",
+        "price": 360,
+        "imageUrl": "https://http2.mlstatic.com/D_NQ_NP_923693-MLA51471105333_092022-O.webp",
+        "category": "",
+        "quantityAvailable": 3,
+        "weight": null,
+        "discountPercentage": 0,
+        "createdAt": {
+            "$date": "2023-10-07T19:33:22.268Z"
+        },
+        "updatedAt": {
+            "$date": "2023-10-07T19:33:22.268Z"
+        },
+        "__v": 0
+    },
+    {
+        "_id": {
+            "$oid": "6521a04f41e9e747782b9282"
+        },
+        "name": "Pelota de Goma para Perros",
+        "price": 700,
+        "imageUrl": "https://d28hi93gr697ol.cloudfront.net/071e89ac-46a5-8ab3/img/Producto/1934/02-1621353559-63212ad6a6a6c.jpeg",
+        "category": "",
+        "quantityAvailable": 5,
+        "weight": null,
+        "discountPercentage": 10,
+        "createdAt": {
+            "$date": "2023-10-07T18:15:43.664Z"
+        },
+        "updatedAt": {
+            "$date": "2023-10-07T18:15:43.664Z"
+        },
+        "__v": 0
+    },
+    {
+        "_id": {
+            "$oid": "6521a04f41e9e747782b9282"
+        },
+        "name": "Pelota de Goma para Perros",
+        "price": 700,
+        "imageUrl": "https://d28hi93gr697ol.cloudfront.net/071e89ac-46a5-8ab3/img/Producto/1934/02-1621353559-63212ad6a6a6c.jpeg",
+        "category": "",
+        "quantityAvailable": 5,
+        "weight": null,
+        "discountPercentage": 10,
+        "createdAt": {
+            "$date": "2023-10-07T18:15:43.664Z"
+        },
+        "updatedAt": {
+            "$date": "2023-10-07T18:15:43.664Z"
+        },
+        "__v": 0
+    }, {
+        "_id": {
+            "$oid": "6521a10341e9e747782b92a7"
+        },
+        "name": "Comida Premium para Gatos",
+        "price": 1000,
+        "imageUrl": "https://jumboargentina.vtexassets.com/arquivos/ids/760156/Alimento-Whiskas-Para-Gatos-Carne-3kg-1-814242.jpg?v=638048145838300000",
+        "category": "",
+        "quantityAvailable": 5,
+        "weight": 3,
+        "discountPercentage": 0,
+        "createdAt": {
+            "$date": "2023-10-07T18:18:43.235Z"
+        },
+        "updatedAt": {
+            "$date": "2023-10-07T18:18:43.235Z"
+        },
+        "__v": 0
+    }, {
+        "_id": {
+            "$oid": "6521a2b241e9e747782b92f4"
+        },
+        "name": "Correa Ajustable para Perros",
+        "price": 500,
+        "imageUrl": "https://catycanar.vtexassets.com/arquivos/ids/156870/13702.jpg?v=637732972353700000",
+        "category": "",
+        "quantityAvailable": 5,
+        "weight": null,
+        "discountPercentage": 15,
+        "createdAt": {
+            "$date": "2023-10-07T18:25:54.999Z"
+        },
+        "updatedAt": {
+            "$date": "2023-10-07T18:25:54.999Z"
+        },
+        "__v": 0
+    }, {
+        "_id": {
+            "$oid": "6521b28241e9e747782b9405"
+        },
+        "name": "Juguete de Cuerda para Mascotas",
+        "price": 360,
+        "imageUrl": "https://http2.mlstatic.com/D_NQ_NP_923693-MLA51471105333_092022-O.webp",
+        "category": "",
+        "quantityAvailable": 3,
+        "weight": null,
+        "discountPercentage": 0,
+        "createdAt": {
+            "$date": "2023-10-07T19:33:22.268Z"
+        },
+        "updatedAt": {
+            "$date": "2023-10-07T19:33:22.268Z"
+        },
+        "__v": 0
+    },
+    {
+        "_id": {
+            "$oid": "6521a04f41e9e747782b9282"
+        },
+        "name": "Pelota de Goma para Perros",
+        "price": 700,
+        "imageUrl": "https://d28hi93gr697ol.cloudfront.net/071e89ac-46a5-8ab3/img/Producto/1934/02-1621353559-63212ad6a6a6c.jpeg",
+        "category": "",
+        "quantityAvailable": 5,
+        "weight": null,
+        "discountPercentage": 10,
+        "createdAt": {
+            "$date": "2023-10-07T18:15:43.664Z"
+        },
+        "updatedAt": {
+            "$date": "2023-10-07T18:15:43.664Z"
+        },
+        "__v": 0
+    }
+]
