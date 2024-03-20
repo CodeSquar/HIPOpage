@@ -8,7 +8,6 @@ import Products from './views/Products'
 import BuyCheckout from './views/BuyCheckout'
 import Login from './views/Login'
 import Register from './views/Register'
-import MercadoPagoPayment from './components/MercadoPagoPayment'
 import Cart from './views/Cart'
 import Success from './views/Succes'
 import Profile from './views/Profile'
@@ -31,13 +30,12 @@ function App() {
               <Route exact path="/" element={<Home />} />
               <Route exact path="/productos/" element={<Products />} />
               <Route exact path="/productos/:id" element={<Product />} />
-              <Route exact path="/productos/:id/buy" element={<BuyCheckout />} />
 
-              <Route exact path="/mercadopago" element={<MercadoPagoPayment />} />
 
               <Route exact path="/success" element={<Success />} />
 
               <Route path="/carrito" element={isAuth ? <Cart /> : <Navigate to="/ingresar" />} />
+              <Route exact path="/carrito/comprar" element={<BuyCheckout />} />
               <Route path="/perfil" element={isAuth ? <Profile />: <Navigate to="/ingresar" />} />
               <Route path="/ingresar" element={!isAuth ? <Login /> : <Navigate to="/" />} />
               <Route path="/registro" element={!isAuth ? <Register />: <Navigate to="/" />} />

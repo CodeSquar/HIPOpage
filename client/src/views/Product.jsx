@@ -4,6 +4,8 @@ import axios from "axios"
 import { useParams, NavLink } from "react-router-dom"
 import ImagesCarousel from "../components/ImagesCarousel"
 import AddCartBtn from "../components/AddCartBtn"
+import ApiServices from "../services/ApiServices"
+import FetchClient from "../services/FerchClient"
 
 export default function Product(params) {
     const { id } = useParams()
@@ -11,10 +13,11 @@ export default function Product(params) {
     const [quantity,setQuantity] = useState(1)
     const { isAuth } = useContext(UserContext);
     useEffect(() => {
+        const apiServices = new ApiServices(FetchClient)
         const getProduct = async () => {
             try {
-                const res = await axios.get(`http://localhost:5000/api/products/${id}`)
-                setProduct(res.data)
+                const res = await apiServices.getProduct(id)
+                setProduct(res)
 
             } catch (err) {
                 console.log(err)

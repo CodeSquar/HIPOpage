@@ -1,6 +1,8 @@
 import { NavLink } from "react-router-dom";
 import { UserContext } from "../providers/UserProvider";
 import { useContext, useState } from "react";
+import ApiServices from "../services/ApiServices";
+import FetchClient from "../services/FerchClient";
 
 export default function Login() {
   const { setToken, setExpiresIn, setIsAuth } = useContext(UserContext);
@@ -10,25 +12,15 @@ export default function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    const data = { username, password };
+    const body = { username, password };
+    const apiServices = new ApiServices(FetchClient)
     try {
-      const response = await fetch("http://localhost:5000/api/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-   
-      if (response.ok) {
-        const responseData = await response.json();
-        setToken(responseData.token);
-        setExpiresIn(responseData.expiresIn);
+      const response = await apiServices.login(body)
+
+        setToken(response.token);
+        setExpiresIn(response.expiresIn);
         setIsAuth(true);
-      } else {
-        // Manejar el caso en que la respuesta no es exitosa
-        console.error("Error al iniciar sesión:", response);
-      }
+      
     } catch (error) {
       console.error("Error al realizar la solicitud:", error);
     }

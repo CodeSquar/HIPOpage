@@ -2,15 +2,18 @@ import { useEffect, useState, useContext } from "react"
 import { useParams, NavLink, useNavigate, Navigate } from "react-router-dom"
 import axios from "axios"
 import { UserContext } from "../providers/UserProvider"
-import { initMercadoPago, Wallet } from "@mercadopago/sdk-react"
-initMercadoPago('APP_USR-45bdab1f-f790-4fce-90c8-7b4e6d854781', { locale: "es-AR" });
+import ApiServices from "../services/ApiServices"
+import FetchClient from "../services/FerchClient"
+import ProductCartItem from "../components/ProductCartItem"
+import LoadingAnimation from "../components/LoadingAnimation"
+/*import { initMercadoPago, Wallet } from "@mercadopago/sdk-react"
+initMercadoPago('APP_USR-45bdab1f-f790-4fce-90c8-7b4e6d854781', { locale: "es-AR" });*/
 
 export default function BuyCheckout() {
-    const navigate = useNavigate()
-    //TODO: Hacer pasarela de pago usando mercado pago
     const { token, isAuth } = useContext(UserContext)
-    const [product, setProduct] = useState({})
-    const [paymentResponse, setPaymentResponse] = useState({})
+    const [userId, setUserId] = useState("")
+    const [cartProducts, setCartProducts] = useState({})
+    const [loadingCart, setLoadingCart] = useState(true)
 
     //shipment states
     const [zipCode, setZipCode] = useState()
@@ -18,44 +21,56 @@ export default function BuyCheckout() {
     const [city, setCity] = useState()
     const [streetName, setStreetName] = useState()
     const [streetNumber, setStreetNumber] = useState()
-
-    const { id } = useParams()
+    const apiServices = new ApiServices(FetchClient)
     useEffect(() => {
 
-        const getProduct = async () => {
+        const getCart = async () => {
+            setLoadingCart(true)
             try {
-                const res = await axios.get(`http://localhost:5000/api/products/${id}`)
-                setProduct(res.data)
-            } catch (err) {
+                const res = await apiServices.getCart(token)
+                setCartProducts(res)
+
+            } catch (error) {
                 console.log(err)
             }
+            setLoadingCart(false)
         }
-        getProduct()
+        getCart()
+    }, [])
+    useEffect(() => {
+
+        const getUser = async () => {
+            try {
+                const res = await apiServices.getUser(token)
+                console.log(res.user._id)
+                setUserId(res.user._id)
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        getUser()
     }, [])
 
     const postPreferences = async () => {
         const preferenceData =
         {
-            id: product._id,
-            quantity: 1,
+            userId: userId,
             zipCode,
             state,
             city,
             streetName,
             streetNumber,
         }
-        if(!state || !city || !zipCode || !streetName || !streetNumber){
-            return
+        console.log(preferenceData)
+        if (!state || !city || !zipCode || !streetName || !streetNumber) {
+            console.log("faltan datos tio!!!")
         }
 
         try {
-            const response = await axios.post('http://localhost:5000/api/payment', preferenceData, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    "Authorization": token
-                }
-            })
-            window.location.href = response.data.init_point
+            const response = await apiServices.payment(preferenceData, token)
+
+
+            window.location.href = response.init_point
 
         } catch (err) {
             console.log(err)
@@ -66,57 +81,70 @@ export default function BuyCheckout() {
 
 
     return (
-        product && (
-            <div className="flex flex-col lg:flex-row  w-full gap-4 lg:gap-8 mt-8 lg:p-16 lg:bg-neutral-800 rounded-3xl">
-                <div className="flex-1">
-
-                    <img className="rounded-xl w-full aspect-square object-contain bg-white" src={product.images?.[0]}></img>
-
+        !loadingCart ? (
+            <div className="block mt-8">
+                <div>
+                    {cartProducts?.cartWithDetails?.map((product) => (
+                        <ProductCartItem
+                            imageSrc={product.productDetail.images?.[0]}
+                            name={product.productDetail.name}
+                            finalPrice={product.productDetail.finalPrice}
+                            quantity={product.quantity}
+                            id={product.id}
+                        />
+                    ))}
                 </div>
-                <div className="flex-1 flex flex-col justify-between">
-
-                    <h2 className="font-black text-3xl">{product.name}</h2>
-                    <div className="block w-full mt-16 [&>input]:bg-neutral-900 [&>input]:p-4">
+                <div className="block w-full mt-8">
+                    <div className="flex flex-col gap-4 [&>input]:bg-neutral-900 [&>input]:p-4 [&>input]:border-b [&>input]:outline-none">
                         <input
                             value={zipCode}
                             onChange={(e) => setZipCode(e.target.value)}
                             placeholder="Código Postal"
+                            className="focus:bg-neutral-700"
                         />
 
                         <input
                             value={state}
                             onChange={(e) => setState(e.target.value)}
                             placeholder="Provincia"
+                            className="focus:bg-neutral-700"
                         />
 
                         <input
                             value={city}
                             onChange={(e) => setCity(e.target.value)}
                             placeholder="Ciudad"
+                            className="focus:bg-neutral-700"
                         />
 
                         <input
                             value={streetName}
                             onChange={(e) => setStreetName(e.target.value)}
                             placeholder="Calle"
+                            className="focus:bg-neutral-700"
                         />
 
                         <input
                             value={streetNumber}
                             onChange={(e) => setStreetNumber(e.target.value)}
                             placeholder="Número de Calle o departamento"
+                            className="focus:bg-neutral-700"
                         />
-
-                        <h2 className="mb-4 flex flex-col font-bold text-sm col-span-2 text-neutral-400">Precio final: <span className="font-black text-2xl text-white">$ {product.finalPrice?.toLocaleString()}</span></h2>
-                        {!isAuth ?
-                            <NavLink className="flex justify-center items-center h-16 w-full aspect-square rounded-xl bg-white py-2 px-4 text-black font-bold text-base mb-4" to="/registro">Registrate para comprar</NavLink>
-                            : <button className="flex justify-center items-center h-16 w-full aspect-square rounded-xl bg-white py-2 px-4 text-black font-bold text-base" onClick={() => postPreferences()}>Ir al pago con mercado pago</button>}
-                        <NavLink to={"/productos/" + product._id} className="flex justify-center items-center h-16 w-full aspect-square rounded-xl bg-neutral-600 py-2 px-4 mt-4 text-black font-bold text-base">Cancelar</NavLink>
                     </div>
-                </div>
-            </div>
-        )
 
+                    {!isAuth ?
+                        <NavLink className="flex justify-center items-center h-16 w-full aspect-square rounded-xl bg-white py-2 px-4 text-black font-bold text-base mt-8" to="/registro">Registrate para comprar</NavLink>
+                        : <button className="flex justify-center items-center h-16 w-full aspect-square rounded-xl bg-white py-2 px-4 text-black font-bold text-base mt-8" onClick={() => postPreferences()}>Ir al pago con mercado pago</button>}
+                    <NavLink to={"/carrito"} className="flex justify-center items-center h-16 w-full aspect-square rounded-xl bg-neutral-600 py-2 px-4 mt-4 text-black font-bold text-base">Cancelar</NavLink>
+                </div>
+
+            </div>
+        ) : (
+            <div className="flex justify-center w-full">
+               <LoadingAnimation/>
+            </div>
+
+        )
 
 
     )

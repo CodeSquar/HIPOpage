@@ -5,6 +5,8 @@ const UserSchema = require("../models/userModel.js")
 const SalesSchema = require("../models/salesModel.js")
 const userInfo = require("../middlewares/userInfo.js")
 const adminCheck = require("../middlewares/adminCheck.js")
+const getCart = require("../utils/getCart.js")
+
 const axios = require("axios")
 router.post("/products", adminCheck, async (req, res) => {
     try {
@@ -71,7 +73,22 @@ router.get("/products", async (req, res) => {
         res.send(err.message);
     }
 })
+router.delete("/products/:id",adminCheck, async (req, res) => {
+    try {
+        const id = req.params.id;
+        console.log(id)
+        const product = await ProductSchema.findById(id);
+        if (!product) {
+            return res.status(404).json({ message: "Product not found" });
+        }
 
+        await ProductSchema.findByIdAndDelete(id);
+
+        res.status(200).json({ message: "Product deleted successfully" });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
 router.get("/products/:id", async (req, res) => {
     try {
         const product = await ProductSchema.findById(req.params.id)
@@ -87,7 +104,7 @@ router.get("/products/:id", async (req, res) => {
 router.post("/cart", userInfo, async (req, res) => {
     try {
         const { id } = req.userInfo;
-        const { productInfo } = req.body;
+        const productInfo = req.body;
 
         if (parseInt(productInfo.quantity) < 1) {
             console.log(productInfo.quantity + "es menor que uno!")
@@ -120,9 +137,9 @@ router.post("/cart", userInfo, async (req, res) => {
 
         // Verificar si la cantidad solicitada supera el stock disponible
         if (totalQuantity > product.quantityAvailable) {
-            console.log(totalQuantity +" Se excede a "+product.quantityAvailable)
+            console.log(totalQuantity + " Se excede a " + product.quantityAvailable)
             return res.status(400).json({ success: false, message: 'La cantidad solicitada excede el stock disponible.' });
-     
+
         }
 
         // Si la cantidad está dentro del stock disponible, proceder a agregar el producto al carrito
@@ -145,59 +162,8 @@ router.post("/cart", userInfo, async (req, res) => {
 });
 router.get("/cart", userInfo, async (req, res) => {
     const { id } = req.userInfo;
-
     try {
-        // Buscar al usuario en la base de datos utilizando el _id
-        const user = await UserSchema.findById(id);
-
-        if (!user) {
-            return res.status(404).json({ success: false, message: 'Usuario no encontrado.' });
-        }
-
-        // Obtener los IDs de los productos en el carrito
-        const productIds = user.cart.map(item => item.id);
-
-        // Buscar detalles de productos usando los IDs
-        const productsDetails = await ProductSchema.find({ _id: { $in: productIds } });
-
-        // Filtrar el carrito del usuario para mantener solo los productos válidos
-        const updatedCart = user.cart.filter(cartItem => {
-            const isValidProduct = productsDetails.some(product => product._id.toString() === cartItem.id);
-            return isValidProduct;
-        });
-
-        // Verificar si la cantidad de algún producto en el carrito supera la cantidad disponible
-        updatedCart.forEach(cartItem => {
-            const productDetail = productsDetails.find(product => product._id.toString() === cartItem.id);
-            if (productDetail && cartItem.quantity > productDetail.quantityAvailable) {
-                // Si la cantidad en el carrito es mayor que la cantidad disponible, ajustar la cantidad en el carrito
-                cartItem.quantity = productDetail.quantityAvailable;
-            }
-        });
-
-        const totalPrice = updatedCart.reduce((acc, cartItem) => {
-            const productDetail = productsDetails.find(product => product._id.toString() === cartItem.id);
-            if (productDetail) {
-                acc += productDetail.price * cartItem.quantity;
-            }
-            return acc;
-        }, 0);
-
-        // Actualizar el carrito del usuario en la base de datos
-        user.cart = updatedCart;
-        await user.save();
-
-        // Agregar detalles de productos al carrito del usuario
-        const cartWithDetails = updatedCart.map(cartItem => {
-            const productDetail = productsDetails.find(product => product._id.toString() === cartItem.id);
-            return {
-                id: cartItem.id,
-                quantity: cartItem.quantity,
-                productDetail: productDetail || null
-            };
-        });
-
-        // Devolver el carrito con detalles de productos en la respuesta
+        const { cartWithDetails, totalPrice } = await getCart(id);
         res.status(200).json({ cartWithDetails, totalPrice });
     } catch (error) {
         console.error(error);
@@ -278,16 +244,28 @@ router.get("/sales", adminCheck, async (req, res) => {
 
 
                     const shippingInfo = response.data.additional_info.shipments.receiver_address
+                    const transactionAmount = response.data.transactionAmount
+                    const productsInfo = response.data.additional_info.items.map((item) => ({
+                        id: item.id,
+                        quantity: item.quantity
+                    }));
+
                     // Obtener los IDs de los productos de la venta desde items.id
-                    const productIds = response.data.additional_info.items.map((item) => item.id);
+                    const productIds = productsInfo.map((item) => item.id);
 
                     // Buscar detalles de productos en ProductSchema usando los IDs
                     const productsDetails = await ProductSchema.find({ _id: { $in: productIds } });
-
+                    const productsWithQuantity = productsDetails.map((productDetail) => {
+                        const productInfo = productsInfo.find((item) => item.id.toString() === productDetail._id.toString());
+                        return {
+                            ...productDetail.toObject(),
+                            quantity: productInfo.quantity
+                        };
+                    });
                     // Retornar la venta con detalles de productos
                     return {
                         ...sale.toObject(),
-                        products: productsDetails,
+                        products: productsWithQuantity,
                         city_name: shippingInfo.city_name,
                         state_name: shippingInfo.state_name,
                         street_name: shippingInfo.street_name,
@@ -306,13 +284,26 @@ router.get("/sales", adminCheck, async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
+router.get("/sales/:id", adminCheck, async (req, res) => {
+    try {
+        const sale = await SalesSchema.findById(req.params.id)
 
+        if (!sale) {
+            return res.status(404).json({ message: "pedido no encontrado." })
+        }
+        res.send(sale)
+    }
+    catch (err) {
+        res.send(err.message);
+    }
+})
 router.post("/notification", async (req, res) => {
     try {
+
         if (req.query.topic === "payment") {
             const sale = new SalesSchema({
                 mpId: req.query.id,
-                state: "accredited"
+                saleState: "accredited"
 
             });
             await sale.save();

@@ -10,33 +10,24 @@ const access_token = "APP_USR-6623054747559974-111505-d441fefdfbc445cd599bf35245
 const success_url = "http://localhost:5173/success"
 const failed_url = "http://localhost:5173/failed"
 const pending_url = "http://localhost:5173/pending"
-
+const getCart = require("../utils/getCart.js")
 router.post("/payment", userInfo, async (req, res) => {
   try {
-    const products = req.body.products
-    const { zipCode, state, city, streetName, streetNumber } = req.body;
+  
+    const body = req.body
+    const { cartWithDetails, totalPrice } = await getCart(body.userId);
 
-    for (const productInfo of products) {
-      const { id, quantity } = productInfo;
-    
-      // Verificar si el ID del producto fue proporcionado
-      if (!id) {
-        return res.status(400).json({ error: "ID del producto no proporcionado" });
-      }
-    
-      // Buscar el producto en la base de datos usando el ID
-      const product = await ProductSchema.findById(id);
-    
-      // Verificar si el producto existe
-      if (!product) {
-        return res.status(404).json({ error: `Producto con ID ${id} no encontrado` });
-      }
-    
-      // Verificar si hay suficiente stock
-      if (product.stock < quantity) {
-        return res.status(400).json({ error: `No hay suficiente stock para el producto con ID ${id}` });
-      }}
-
+    const finalCartItems = cartWithDetails?.map(item => ({
+      id: item.id,
+      title: item.productDetail.name,
+      description: item.productDetail.description,
+      picture_url: item?.productDetail.images[0],
+      category_id: item.productDetail.category,
+      quantity: item.quantity,
+      currency_id: 'ARS',
+      unit_price: item.productDetail.finalPrice,
+    }));
+  /*  console.log(finalCartItems)*/
     // Construir los datos para la solicitud a Mercado Pago usando la información del producto
     const data = {
       back_urls: {
@@ -46,29 +37,18 @@ router.post("/payment", userInfo, async (req, res) => {
       },
       shipments: {
         receiver_address: {
-          zip_code: zipCode,
-          state_name: state,
-          city_name: city,
-          street_name: streetName,
-          street_number: streetNumber
+          zip_code: body.zipCode,
+          state_name: body.state,
+          city_name: body.city,
+          street_name: body.streetName,
+          street_number: body.streetNumber
         },
         "width": null,
         "height": null
       },
-      notification_url: "https://e769-45-225-212-142.ngrok-free.app/api/notification",
+      notification_url: "https://qq06pqjf-5000.brs.devtunnels.ms/api/notification",
       auto_return: "approved",
-      items: [
-        {
-          id: product._id,
-          title: product.name,
-          description: product.description,
-          picture_url: product.images[0],
-          category_id: product.category,
-          quantity: quantity,
-          currency_id: 'ARS',
-          unit_price: product.finalPrice,
-        },
-      ],
+      items:finalCartItems,
       payer: {
         address: { street_number: 1234 },
       },

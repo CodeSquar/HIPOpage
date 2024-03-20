@@ -1,8 +1,25 @@
 import { NavLink, useParams } from "react-router-dom"
+import { useEffect,useState } from "react"
+import ApiServices from "../../services/ApiServices"
+import FetchClient from "../../services/FerchClient"
 export default function AdminOrder(params) {
+    const [saleInfo,setSaleInfo] = useState({})
     const {id} = useParams()
     const price = 2450
     const quantity = 3
+
+    useEffect(() => {
+        const apiServices = new ApiServices(FetchClient)
+        const getSale = async () => {
+            try {
+                const res = await apiServices.getSale(id,token)
+                setSales(res)
+            } catch (err) {
+                console.log(err)
+            }
+        }
+        getSale()
+    }, [])
     return(
         <div className="mx-6 bg-white rounded-2xl mt-12 overflow-hidden">
             <img src="https://acdn.mitiendanube.com/stores/575/267/products/dudimascotas1-77db8a31f93586947415590751720159-1024-1024.jpg" className="w-full"></img>

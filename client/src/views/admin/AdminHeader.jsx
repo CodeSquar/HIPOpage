@@ -22,7 +22,7 @@ export default function AdminHeader(params) {
 
             </header>
             {navActive && (
-                <nav className="left-0 top-0 bg-white w-full h-full fixed">
+                <nav className="z-10 left-0 top-0 bg-white w-full h-full fixed">
                     <ul className="  z-50 p-6 text-black font-bold space-y-2">
                         <div className="flex justify-end">
                             <button onClick={() => setNavActive(false)} className="text-end">X</button>
@@ -31,7 +31,7 @@ export default function AdminHeader(params) {
                         <li ><NavLink className="flex px-6 py-4 bg-neutral-100 rounded-xl" to="/admin">Inicio</NavLink></li>
                         <li ><NavLink className="flex px-6 py-4 bg-neutral-100 rounded-xl" to="./pedidos">Pedidos</NavLink></li>
                         <li ><NavLink className="flex px-6 py-4 bg-neutral-100 rounded-xl" to="./productos">Productos</NavLink></li>
-                        <li ><NavLink className="flex px-6 py-4 bg-neutral-100 rounded-xl" to="./subir">Subir producto</NavLink></li>
+                        <li ><NavLink className="flex px-6 py-4 bg-neutral-100 rounded-xl" to="./añadirproducto">Subir producto</NavLink></li>
                         <li ><NavLink className="flex px-6 py-4 bg-neutral-100 rounded-xl" to="./cerrassesion">Cerrar sesion</NavLink></li>
                     </ul>
                 </nav>

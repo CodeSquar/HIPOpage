@@ -1,44 +1,51 @@
 import { useContext, useEffect, useState } from "react"
 import axios from "axios"
 import { UserContext } from "../../providers/UserProvider"
+import ApiServices from "../../services/ApiServices"
+import FetchClient from "../../services/FerchClient"
 
 export default function AdminOrders(params) {
-    const {token} = useContext(UserContext)
+    const { token } = useContext(UserContext)
     const [sales, setSales] = useState({})
     useEffect(() => {
+        const apiServices = new ApiServices(FetchClient)
         const getSales = async () => {
             try {
-                const res = await axios.get("http://localhost:5000/api/sales",{
-                    headers:{
-                        Authorization: token
-                    }
-                })
-                console.log(res.data)
-                setSales(res.data)
+                const res = await apiServices.getSales(token)
+                setSales(res)
             } catch (err) {
-
+                console.log(err)
             }
         }
         getSales()
     }, [])
     return (
-        <div className="px-6 ">
-            <h2 className="font-black mt-12 text-2xl">Pedidos</h2>
-            <div className="space-y-6 mt-8">
-                {sales?.sales?.map((sale, index) => (
-                    <div className="">
-                        <h2 className="font-bold">Pedido {sale.mpId}</h2>
-                        {sale.products.map((item) => (
-                            <div className="bg-white p-4 rounded-lg mt-4">
-                                <p>{item.name} x1</p>
+
+        <div className="px-6">
+            <div className="w-full bg-white mt-8 rounded-xl p-16">
+                <table className="w-full">
+
+                    <thead className="">
+                        <tr className="[&>th]:text-left">
+                            <th>Nombre</th>
+                            <th>Cantidad</th>
+                            <th>Subtotal</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    {sales?.sales?.map((sale) => (
+
+                        sale.products.map((item) => (
+                            <tr>
                               
-                            </div>
-
-                        ))}
-                    <p className=" mt-2">Ubicacion de envio: <span className="font-bold">{sale.state_name}, {sale.city_name}, {sale.street_name}, {sale.street_number}</span></p>
-                    </div>
-
-                ))}
+                                <td className="flex"><img className="w-8" src={item.images[0]}></img>{item.name}</td>
+                                <td>{item.quantity}</td>
+                                <td>{item.finalPrice}</td>
+                                <td>{item.finalPrice * item.quantity}</td>
+                            </tr>
+                        ))
+                    ))}
+                </table>
             </div>
 
         </div>

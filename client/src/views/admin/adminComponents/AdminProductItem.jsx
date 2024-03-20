@@ -1,0 +1,25 @@
+import { useState } from "react"
+import ProductOptions from "./ProductOptions"
+import { NavLink } from "react-router-dom"
+export default function AdminProductItem(props) {
+    const { productInfo,products,setProducts } = props
+    const [optionsActive, setOptionsActive] = useState(false)
+
+    return (
+        <div  className="w-full relative rounded-xl overflow-hidden">
+            <NavLink to={`${productInfo._id}/`}>
+            <img src={productInfo.images[0]} className="aspect-square w-full object-cover"></img>
+            </NavLink>
+         
+            <div className="flex w-full py-4 px-6 bg-white items-center relative">
+                <h2 className="line-clamp-1  text-sm w-full">{productInfo.name}</h2>
+                <div onClick={() => setOptionsActive(!optionsActive)} className="aspect-square p-1 cursor-pointer" >
+                    <svg className="h-5 opacity-50 " viewBox="0 0 24 24" fill="none"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M12 12H12.01M12 6H12.01M12 18H12.01M13 12C13 12.5523 12.5523 13 12 13C11.4477 13 11 12.5523 11 12C11 11.4477 11.4477 11 12 11C12.5523 11 13 11.4477 13 12ZM13 18C13 18.5523 12.5523 19 12 19C11.4477 19 11 18.5523 11 18C11 17.4477 11.4477 17 12 17C12.5523 17 13 17.4477 13 18ZM13 6C13 6.55228 12.5523 7 12 7C11.4477 7 11 6.55228 11 6C11 5.44772 11.4477 5 12 5C12.5523 5 13 5.44772 13 6Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
+                </div>
+                {optionsActive && <ProductOptions setActive={setOptionsActive} id={productInfo._id} products={products} setProducts={setProducts}/>}
+            </div>
+          
+
+        </div>
+    )
+}

@@ -10,11 +10,21 @@ export const UserContext = createContext({
 });
 
 export const UserProvider = ({ children }) => {
+ 
+
   const [token, setToken] = useState(localStorage.getItem('token') || undefined);
   const [isAuth, setIsAuth] = useState(JSON.parse(localStorage.getItem('isAuth')) || false);
   const [expiresIn, setExpiresIn] = useState(localStorage.getItem('expiresIn') || undefined);
 
   useEffect(() => {
+    if (token === null || token === undefined || token === false || isAuth === false || isAuth === undefined || isAuth === null) {
+        setToken(undefined);
+        setIsAuth(false);
+        setExpiresIn(undefined);
+    }
+  }, [token,isAuth]);
+
+useEffect(() => {
     localStorage.setItem('isAuth', JSON.stringify(isAuth));
   }, [isAuth]);
 

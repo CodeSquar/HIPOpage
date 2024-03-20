@@ -31,7 +31,6 @@ function Filter(props) {
     )
 }
 export default function ProductsList(props) {
-    const { extended } = props
     const [searchParams, setSearchParams] = useSearchParams()
     const precioInicial = searchParams.get("minPrice") || ""
     const precioFinal = searchParams.get("maxPrice") || ""
@@ -40,10 +39,11 @@ export default function ProductsList(props) {
 
     const productsInRange = ((precioInicial >= 0 || precioFinal >= 0) && (products?.length > 0))
     console.log(precioInicial, productsInRange)
+
     useEffect(() => {
         const getProducts = async () => {
             try {
-                const res = await axios.get(`http://localhost:5000/api/products?minPrice=${precioInicial}&maxPrice=${precioFinal}`)
+                const res = await axios.get(`http://192.168.123.36:5000/api/products?minPrice=${precioInicial}&maxPrice=${precioFinal}`)
                 setProducts(res.data.products.docs)
             } catch (err) {
                 console.log(err)
